@@ -21,13 +21,14 @@ def keyword_ui():
     with c2:
         if st.button("트렌드 새로고침", use_container_width=True):
             try:
-                rankings = build_keyword_rankings()
-                rows = []
-                for period, values in rankings.items():
-                    for kw, score in values[:30]:
-                        rows.append(("google_trends", period, kw, float(score)))
-                insert_keyword_cache(rows)
-                log_event("google_trends", "success", f"{len(rows)}건 저장")
+                with st.spinner("트렌드 데이터 수집중입니다..."):
+                    rankings = build_keyword_rankings()
+                    rows = []
+                    for period, values in rankings.items():
+                        for kw, score in values[:30]:
+                            rows.append(("google_trends", period, kw, float(score)))
+                    insert_keyword_cache(rows)
+                    log_event("google_trends", "success", f"{len(rows)}건 저장")
                 st.success("트렌드 캐시를 갱신했습니다.")
             except Exception as e:
                 log_event("google_trends", "error", str(e))
@@ -57,7 +58,8 @@ def keyword_ui():
             st.warning("키워드를 입력해 주세요.")
             return
         try:
-            df = get_trends(keyword.strip(), timeframe="today 3-m")
+            with st.spinner("키워드 분석중입니다..."):
+                df = get_trends(keyword.strip(), timeframe="today 3-m")
             if df.empty or keyword.strip() not in df.columns:
                 st.warning("표시할 트렌드 데이터가 없습니다. 다른 키워드를 시도해 보세요.")
             else:

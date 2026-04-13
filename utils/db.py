@@ -165,11 +165,11 @@ def get_summary_stats():
         WHERE category IS NOT NULL AND TRIM(category) != ''
         GROUP BY category
         ORDER BY COUNT(*) DESC
-        LIMIT 20
+        LIMIT 50
         """
     )
     by_category = cur.fetchall()
-    cur.execute("SELECT mall, COUNT(*) FROM products GROUP BY mall ORDER BY COUNT(*) DESC LIMIT 20")
+    cur.execute("SELECT mall, COUNT(*) FROM products GROUP BY mall ORDER BY COUNT(*) DESC LIMIT 50")
     by_mall = cur.fetchall()
     conn.close()
     return {

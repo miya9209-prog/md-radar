@@ -9,8 +9,8 @@ def generate_insight():
 
     stats = get_summary_stats()
     by_source = "\n".join([f"- {src}: {cnt}건" for src, cnt in stats["by_source"][:10]])
-    by_category = "\n".join([f"- {cat}: {cnt}건" for cat, cnt in stats["by_category"][:15]])
-    by_mall = "\n".join([f"- {mall}: {cnt}건" for mall, cnt in stats["by_mall"][:15]])
+    by_category = "\n".join([f"- {cat}: {cnt}건" for cat, cnt in stats["by_category"][:30]])
+    by_mall = "\n".join([f"- {mall}: {cnt}건" for mall, cnt in stats["by_mall"][:30]])
 
     client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
     prompt = f"""

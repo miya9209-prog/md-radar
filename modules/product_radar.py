@@ -50,9 +50,10 @@ def product_ui():
             st.warning("상품 키워드를 입력해 주세요.")
             return
         try:
-            rows, cards = collect_products_by_keyword(keyword.strip(), pages=pages, sort=sort)
-            saved = insert_products(rows)
-            log_event("naver", "success", f"{keyword.strip()} / {saved}건 저장")
+            with st.spinner("상품 검색중입니다..."):
+                rows, cards = collect_products_by_keyword(keyword.strip(), pages=pages, sort=sort)
+                saved = insert_products(rows)
+                log_event("naver", "success", f"{keyword.strip()} / {saved}건 저장")
             st.success(f"{saved}건 저장했습니다.")
             render_clickable_table(pd.DataFrame(cards))
         except Exception as e:

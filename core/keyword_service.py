@@ -19,8 +19,8 @@ def build_keyword_rankings():
                 daily_scores[kw] = float(series.tail(7).mean())
                 weekly_scores[kw] = float(series.tail(28).mean())
                 monthly_scores[kw] = float(series.mean())
-        except Exception:
-            continue
+        except Exception as e:
+            raise RuntimeError(f"Google Trends 수집 실패: {e}") from e
 
     daily = sorted(daily_scores.items(), key=lambda x: float(x[1]), reverse=True)
     weekly = sorted(weekly_scores.items(), key=lambda x: float(x[1]), reverse=True)

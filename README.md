@@ -1,21 +1,9 @@
-# MD 인사이트
+# MD 인사이트 수정본
 
-## Streamlit Secrets
-```toml
-OPENAI_API_KEY = "한줄 전체키"
-NAVER_CLIENT_ID = "..."
-NAVER_CLIENT_SECRET = "..."
-```
-
-## 실행
-```bash
-pip install -r requirements.txt
-streamlit run app.py
-```
-
-## 구조
-- 키워드 RADAR: 일간/주간/월간 트렌드 요약 + 직접 검색
-- 상품 RADAR: 핫 카테고리 + 썸네일 + 상품 검색
-- 경쟁사 RADAR: 키워드 방식 / 전체 탐색 방식
-- MD 인사이트: DB 기반 GPT 분석
-- 매출형 상품기획: GPT 기반 상품기획서 생성
+## 반영
+- 경쟁사 수집 생성중 표시 추가
+- MD 인사이트에서 카테고리별 현황 / 몰별 상위 현황 2열 배치
+- 카테고리에 아우터, 셔츠, 패션잡화, 팬츠 반영
+- 팬츠로 통합 분류
+- 경쟁사 업체 추가 반영
+- 키워드 레이다 새로고침 spinner 및 오류 표시 보강
