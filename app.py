@@ -8,14 +8,24 @@ from utils.db import init_db
 st.set_page_config(page_title="MD 레이다", layout="wide")
 init_db()
 
-st.title("📡 MD 레이다 (MD RADAR)")
+st.markdown("""
+<style>
+.block-container {padding-top: 1.2rem; padding-bottom: 2rem;}
+</style>
+""", unsafe_allow_html=True)
 
-menu = st.sidebar.radio("메뉴", [
-    "키워드 RADAR",
-    "상품 RADAR",
-    "경쟁사 RADAR",
-    "MD 인사이트"
-])
+left, right = st.columns([3, 2])
+with left:
+    st.markdown("# 📡 MD 레이다 (MD RADAR)")
+with right:
+    menu = st.radio(
+        "메뉴",
+        ["키워드 RADAR", "상품 RADAR", "경쟁사 RADAR", "MD 인사이트"],
+        horizontal=True,
+        label_visibility="collapsed",
+    )
+
+st.caption("키워드 트렌드, 포털 상품 검색, 경쟁사 추적, GPT 인사이트를 한 화면에서 확인합니다.")
 
 if menu == "키워드 RADAR":
     keyword_ui()

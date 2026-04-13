@@ -1,29 +1,44 @@
 import streamlit as st
 from openai import OpenAI
-from utils.db import get_product_names
+from utils.db import get_names_for_insight, get_summary_stats
 
 def generate_insight():
-    names = get_product_names(limit=50)
+    names = get_names_for_insight(limit=120)
     if not names:
-        return "먼저 상품 RADAR나 경쟁사 RADAR에서 데이터를 수집해 주세요."
+        return "먼저 상품 RADAR 또는 경쟁사 RADAR에서 데이터를 수집해 주세요."
 
-    text_data = "\n".join(names)
+    stats = get_summary_stats()
+    by_source = "\n".join([f"- {src}: {cnt}건" for src, cnt in stats["by_source"][:10]])
+    by_mall = "\n".join([f"- {mall}: {cnt}건" for mall, cnt in stats["by_mall"][:15]])
+
     client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
     prompt = f'''
-아래는 최근 수집된 상품명 목록입니다.
+아래는 최근 수집된 패션 상품 데이터입니다.
 
-{text_data}
+[전체 수집 개수]
+{stats["total"]}건
 
-다음 형식으로 한국어로 정리해 주세요.
-1. 핵심 키워드 5개
-2. 반복되는 스타일/소재/핏 특징
-3. 가격 전략에 대한 추정 포인트
-4. 다음 상품기획 추천 5가지
+[소스별 개수]
+{by_source}
 
-너무 장황하지 않게, 실무 MD가 바로 볼 수 있게 정리해 주세요.
+[몰별 개수]
+{by_mall}
+
+[최근 상품명]
+{"\n".join(names)}
+
+위 데이터를 바탕으로 한국어로 아래 형식에 맞춰 정리해 주세요.
+
+1. 핵심 키워드 7개
+2. 반복되는 스타일/핏/소재 특징
+3. 가격대 해석
+4. 경쟁사/포털 관점에서 지금 강한 포인트
+5. 다음 상품기획 제안 7개
+6. 상세페이지/광고카피에 바로 쓸 표현 10개
+
+실무 MD가 바로 회의 자료에 붙여넣을 수 있게, 군더더기 없이 구체적으로 작성해 주세요.
 '''
-
     res = client.chat.completions.create(
         model="gpt-4.1-mini",
         messages=[{"role": "user", "content": prompt}],
