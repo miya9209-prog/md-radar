@@ -5,22 +5,27 @@ from utils.db import get_db_path_text, get_summary_stats
 
 def insight_ui():
     st.subheader("MD 인사이트")
+    st.caption("현재 인사이트는 프로그램이 수집해 저장한 데이터(DB)를 바탕으로 GPT가 해석합니다.")
     st.caption(f"DB 저장 위치: {get_db_path_text()}")
 
     stats = get_summary_stats()
-    c1, c2 = st.columns(2)
+    c1, c2, c3 = st.columns(3)
     with c1:
         st.metric("전체 저장 건수", stats["total"])
     with c2:
         st.metric("수집 소스 수", len(stats["by_source"]))
+    with c3:
+        st.metric("카테고리 수", len(stats["by_category"]))
 
     if stats["by_source"]:
         st.write("소스별 수집 현황")
-        st.dataframe(pd.DataFrame(stats["by_source"], columns=["source", "count"]), use_container_width=True)
-
+        st.dataframe(pd.DataFrame(stats["by_source"], columns=["source", "count"]), use_container_width=True, hide_index=True)
+    if stats["by_category"]:
+        st.write("카테고리별 현황")
+        st.dataframe(pd.DataFrame(stats["by_category"], columns=["category", "count"]), use_container_width=True, hide_index=True)
     if stats["by_mall"]:
         st.write("몰별 상위 현황")
-        st.dataframe(pd.DataFrame(stats["by_mall"], columns=["mall", "count"]), use_container_width=True)
+        st.dataframe(pd.DataFrame(stats["by_mall"], columns=["mall", "count"]), use_container_width=True, hide_index=True)
 
     if st.button("GPT 분석 실행", use_container_width=True):
         try:

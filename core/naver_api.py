@@ -18,7 +18,7 @@ def search_naver_shopping(query, display=50, start=1, sort="sim"):
     res.raise_for_status()
     return res.json()
 
-def search_many(query, pages=3, display=100, sort="sim"):
+def search_many(query, pages=2, display=50, sort="sim"):
     items = []
     for page in range(pages):
         start = page * display + 1
