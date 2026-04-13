@@ -12,7 +12,9 @@ def planner_ui():
             st.warning("기획 키워드를 입력해 주세요.")
             return
         try:
-            result = generate_sales_planner(keyword.strip())
+            with st.spinner("상품기획 생성중입니다..."):
+                result = generate_sales_planner(keyword.strip())
+            st.success("상품기획 생성 완료")
             st.write(result)
         except Exception as e:
             st.error(f"상품기획 생성 중 오류가 발생했습니다: {e}")

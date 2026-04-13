@@ -25,9 +25,3 @@ def guess_category(name, keyword=""):
         if any(w in src for w in words):
             return cat
     return ""
-
-def price_to_int(value):
-    try:
-        return int(str(value).replace(",", "").replace("원", "").strip())
-    except Exception:
-        return None

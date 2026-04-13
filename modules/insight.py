@@ -29,7 +29,9 @@ def insight_ui():
 
     if st.button("GPT 분석 실행", use_container_width=True):
         try:
-            result = generate_insight()
+            with st.spinner("분석 생성중입니다..."):
+                result = generate_insight()
+            st.success("완료되었습니다.")
             st.write(result)
         except Exception as e:
             st.error(f"GPT 분석 중 오류가 발생했습니다: {e}")

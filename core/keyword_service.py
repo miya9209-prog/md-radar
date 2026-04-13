@@ -25,8 +25,4 @@ def build_keyword_rankings():
     daily = sorted(daily_scores.items(), key=lambda x: float(x[1]), reverse=True)
     weekly = sorted(weekly_scores.items(), key=lambda x: float(x[1]), reverse=True)
     monthly = sorted(monthly_scores.items(), key=lambda x: float(x[1]), reverse=True)
-    return {
-        "daily": daily,
-        "weekly": weekly,
-        "monthly": monthly,
-    }
+    return {"daily": daily, "weekly": weekly, "monthly": monthly}

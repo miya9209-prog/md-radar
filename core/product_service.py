@@ -35,7 +35,9 @@ def discover_hot_categories(pages=1):
         except Exception:
             items = []
 
-        score = len(items) * 10
+        unique_malls = len(set([i.get("mallName", "") for i in items if i.get("mallName", "")]))
+        score = (len(items) * 5) + (unique_malls * 10)
+
         ranking.append({
             "카테고리": category,
             "검색지수": score,
