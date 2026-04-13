@@ -14,7 +14,6 @@ def _show_rank_table(rows):
 
 def keyword_ui():
     st.subheader("키워드 RADAR")
-
     c1, c2 = st.columns([3, 1])
     with c1:
         st.markdown("#### 오늘/주간/월간 트렌드 요약")
@@ -52,7 +51,6 @@ def keyword_ui():
     st.divider()
     st.markdown("#### 직접 검색")
     keyword = st.text_input("키워드 입력", placeholder="예: 40대 여성 가디건")
-
     if st.button("키워드 분석", use_container_width=True):
         if not keyword.strip():
             st.warning("키워드를 입력해 주세요.")

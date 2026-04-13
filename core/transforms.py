@@ -1,5 +1,4 @@
 import re
-
 TAG_RE = re.compile(r"<[^>]+>")
 
 def clean_html(text):
@@ -13,7 +12,7 @@ def guess_category(name, keyword=""):
         "가디건": ["가디건"],
         "블라우스": ["블라우스"],
         "티셔츠": ["티셔츠", "반팔", "긴팔", "맨투맨", "후드"],
-        "팬츠": ["팬츠", "바지", "슬랙스", "데님", "청바지", "와이드팬츠", "조거", "레깅스"],
+        "팬츠": ["팬츠", "바지", "슬랙스", "데님", "청바지", "조거", "레깅스"],
         "원피스": ["원피스"],
         "자켓": ["자켓", "재킷", "야상"],
         "니트": ["니트", "스웨터"],
@@ -24,4 +23,4 @@ def guess_category(name, keyword=""):
     for cat, words in mapping.items():
         if any(w in src for w in words):
             return cat
-    return ""
+    return "기타"

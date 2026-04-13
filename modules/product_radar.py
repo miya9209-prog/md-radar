@@ -6,7 +6,6 @@ from utils.db import insert_products, get_recent_products, log_event
 
 def product_ui():
     st.subheader("상품 RADAR")
-
     c1, c2 = st.columns([3, 1])
     with c1:
         st.markdown("#### 핫 카테고리")
@@ -29,7 +28,6 @@ def product_ui():
     if ranking:
         rank_df = pd.DataFrame(ranking)
         st.dataframe(rank_df, use_container_width=True, hide_index=True)
-
         category_options = rank_df["카테고리"].tolist()
         selected_category = st.selectbox("카테고리 선택", category_options, key="product_hot_category")
         st.caption("카테고리 탐색 샘플")
@@ -44,7 +42,6 @@ def product_ui():
         sort = st.selectbox("정렬", ["sim", "date", "asc", "dsc"])
     with c3:
         pages = st.selectbox("수집량", [1, 2, 3], index=1)
-
     if st.button("네이버 검색", use_container_width=True):
         if not keyword.strip():
             st.warning("상품 키워드를 입력해 주세요.")
@@ -64,21 +61,7 @@ def product_ui():
     st.caption("최근 저장 데이터")
     rows = get_recent_products(limit=50, source="naver")
     if rows:
-        df = pd.DataFrame(
-            rows,
-            columns=["id", "source", "keyword", "category", "name", "price", "mall", "link", "image_url", "collected_at"],
-        )
-        show = df.rename(
-            columns={
-                "image_url": "이미지",
-                "name": "상품명",
-                "category": "카테고리",
-                "price": "가격",
-                "mall": "몰",
-                "keyword": "키워드",
-                "link": "링크",
-                "collected_at": "수집일시",
-            }
-        )
-        show = show[["이미지", "상품명", "카테고리", "가격", "몰", "키워드", "링크", "수집일시"]]
+        df = pd.DataFrame(rows, columns=["id","source","keyword","category","name","price","mall","link","image_url","collected_at"])
+        show = df.rename(columns={"image_url":"이미지","name":"상품명","category":"카테고리","price":"가격","mall":"몰","keyword":"키워드","link":"링크","collected_at":"수집일시"})
+        show = show[["이미지","상품명","카테고리","가격","몰","키워드","링크","수집일시"]]
         render_clickable_table(show)

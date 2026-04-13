@@ -11,19 +11,14 @@ init_db()
 
 st.markdown("""
 <style>
-.block-container {
-    padding-top: 2.2rem;
-    padding-bottom: 2rem;
-}
+.block-container {padding-top: 2.2rem; padding-bottom: 2rem;}
 button[data-baseweb="tab"] {
     font-size: 20px !important;
     font-weight: 700 !important;
     padding: 14px 28px !important;
     margin-right: 14px !important;
 }
-div[data-baseweb="tab-list"] {
-    gap: 0.35rem !important;
-}
+div[data-baseweb="tab-list"] {gap: 0.35rem !important;}
 </style>
 """, unsafe_allow_html=True)
 

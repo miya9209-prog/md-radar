@@ -8,12 +8,7 @@ def search_naver_shopping(query, display=50, start=1, sort="sim"):
         "X-Naver-Client-Id": st.secrets["NAVER_CLIENT_ID"],
         "X-Naver-Client-Secret": st.secrets["NAVER_CLIENT_SECRET"],
     }
-    params = {
-        "query": query,
-        "display": max(1, min(int(display), 100)),
-        "start": max(1, min(int(start), 1000)),
-        "sort": sort,
-    }
+    params = {"query": query, "display": max(1, min(int(display), 100)), "start": max(1, min(int(start), 1000)), "sort": sort}
     res = requests.get(BASE_URL, headers=headers, params=params, timeout=20)
     res.raise_for_status()
     return res.json()

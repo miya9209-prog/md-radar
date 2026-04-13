@@ -4,9 +4,7 @@ from core.google_trends import get_interest_for_keywords
 def build_keyword_rankings():
     seeds = TREND_SEED_KEYWORDS[:]
     chunk_size = 5
-    daily_scores = {}
-    weekly_scores = {}
-    monthly_scores = {}
+    daily_scores, weekly_scores, monthly_scores = {}, {}, {}
 
     for i in range(0, len(seeds), chunk_size):
         chunk = seeds[i:i + chunk_size]
@@ -22,7 +20,8 @@ def build_keyword_rankings():
         except Exception as e:
             raise RuntimeError(f"Google Trends 수집 실패: {e}") from e
 
-    daily = sorted(daily_scores.items(), key=lambda x: float(x[1]), reverse=True)
-    weekly = sorted(weekly_scores.items(), key=lambda x: float(x[1]), reverse=True)
-    monthly = sorted(monthly_scores.items(), key=lambda x: float(x[1]), reverse=True)
-    return {"daily": daily, "weekly": weekly, "monthly": monthly}
+    return {
+        "daily": sorted(daily_scores.items(), key=lambda x: float(x[1]), reverse=True),
+        "weekly": sorted(weekly_scores.items(), key=lambda x: float(x[1]), reverse=True),
+        "monthly": sorted(monthly_scores.items(), key=lambda x: float(x[1]), reverse=True),
+    }

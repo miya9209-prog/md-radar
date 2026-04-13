@@ -6,12 +6,10 @@ def generate_insight():
     names = get_names_for_insight(limit=150)
     if not names:
         return "먼저 상품 RADAR 또는 경쟁사 RADAR에서 데이터를 수집해 주세요."
-
     stats = get_summary_stats()
     by_source = "\n".join([f"- {src}: {cnt}건" for src, cnt in stats["by_source"][:10]])
     by_category = "\n".join([f"- {cat}: {cnt}건" for cat, cnt in stats["by_category"][:30]])
     by_mall = "\n".join([f"- {mall}: {cnt}건" for mall, cnt in stats["by_mall"][:30]])
-
     client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
     prompt = f"""
 아래는 최근 수집된 패션 상품 데이터입니다.
@@ -41,10 +39,7 @@ def generate_insight():
 5. 다음 상품기획 제안 7개
 6. 상세페이지/광고카피에 바로 쓸 표현 10개
 """
-    res = client.chat.completions.create(
-        model="gpt-4.1-mini",
-        messages=[{"role": "user", "content": prompt}],
-    )
+    res = client.chat.completions.create(model="gpt-4.1-mini", messages=[{"role": "user", "content": prompt}])
     return res.choices[0].message.content
 
 def generate_sales_planner(keyword):
@@ -114,11 +109,6 @@ def generate_sales_planner(keyword):
 
 11. 리스크 및 보완
 - 
-
-실무 MD가 바로 복붙해서 사용할 수 있도록 구체적으로 작성하세요.
 """
-    res = client.chat.completions.create(
-        model="gpt-4.1-mini",
-        messages=[{"role": "user", "content": prompt}],
-    )
+    res = client.chat.completions.create(model="gpt-4.1-mini", messages=[{"role": "user", "content": prompt}])
     return res.choices[0].message.content

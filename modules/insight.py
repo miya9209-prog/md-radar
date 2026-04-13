@@ -1,5 +1,6 @@
 import pandas as pd
 import streamlit as st
+from core.catalog import ALL_CATEGORIES
 from core.gpt_insight import generate_insight
 from utils.db import get_db_path_text, get_summary_stats
 
@@ -26,14 +27,18 @@ def insight_ui():
     with c2:
         st.metric("수집 소스 수", len(stats["by_source"]))
     with c3:
-        st.metric("카테고리 수", len(stats["by_category"]))
+        st.metric("카테고리 수", len(ALL_CATEGORIES))
+
+    cat_dict = dict(stats["by_category"])
+    final_categories = [[cat, cat_dict.get(cat, 0)] for cat in ALL_CATEGORIES]
+    cat_df = pd.DataFrame(final_categories, columns=["category", "count"])
+
+    mall_df = pd.DataFrame(stats["by_mall"][:len(ALL_CATEGORIES)], columns=["mall", "count"])
 
     col1, col2 = st.columns(2)
     with col1:
         st.write("카테고리별 현황")
-        if stats["by_category"]:
-            st.dataframe(pd.DataFrame(stats["by_category"], columns=["category", "count"]).head(30), use_container_width=True, hide_index=True)
+        st.dataframe(cat_df, use_container_width=True, hide_index=True)
     with col2:
         st.write("몰별 상위 현황")
-        if stats["by_mall"]:
-            st.dataframe(pd.DataFrame(stats["by_mall"], columns=["mall", "count"]).head(30), use_container_width=True, hide_index=True)
+        st.dataframe(mall_df, use_container_width=True, hide_index=True)
