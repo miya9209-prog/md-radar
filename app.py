@@ -5,6 +5,7 @@ from modules.competitor_radar import competitor_ui
 from modules.insight import insight_ui
 from utils.db import init_db
 
+st.set_page_config(page_title="MD 레이다", layout="wide")
 init_db()
 
 st.title("📡 MD 레이다 (MD RADAR)")
