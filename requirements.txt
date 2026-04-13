@@ -1,6 +1,5 @@
 streamlit
 requests
 pandas
-beautifulsoup4
-pytrends
 openai>=1.0.0
+pytrends

@@ -7,31 +7,33 @@ from utils.db import insert_products, get_recent_products, log_event
 def product_ui():
     st.subheader("상품 RADAR")
 
-    c1, c2 = st.columns([2, 1])
+    c1, c2 = st.columns([3, 1])
     with c1:
-        st.markdown("#### 놓치기 쉬운 핫 카테고리")
+        st.markdown("#### 핫 카테고리")
     with c2:
-        if st.button("카테고리 탐색 갱신", use_container_width=True):
+        if st.button("카테고리 재탐색", use_container_width=True):
             st.session_state["refresh_hot_categories"] = True
 
     if st.session_state.get("refresh_hot_categories", True):
         try:
-            ranking, samples = discover_hot_categories(pages=1)
+            ranking, sample_map = discover_hot_categories(pages=1)
             st.session_state["hot_category_ranking"] = ranking
-            st.session_state["hot_category_samples"] = samples
+            st.session_state["hot_category_samples"] = sample_map
             st.session_state["refresh_hot_categories"] = False
         except Exception as e:
             st.error(f"카테고리 탐색 중 오류가 발생했습니다: {e}")
 
     ranking = st.session_state.get("hot_category_ranking", [])
-    samples = st.session_state.get("hot_category_samples", [])
+    sample_map = st.session_state.get("hot_category_samples", {})
 
     if ranking:
-        st.dataframe(pd.DataFrame(ranking), use_container_width=True, hide_index=True)
+        rank_df = pd.DataFrame(ranking)
+        st.dataframe(rank_df, use_container_width=True, hide_index=True)
 
-    if samples:
+        category_options = rank_df["카테고리"].tolist()
+        selected_category = st.selectbox("카테고리 선택", category_options, key="product_hot_category")
         st.caption("카테고리 탐색 샘플")
-        render_clickable_table(pd.DataFrame(samples[:20]))
+        render_clickable_table(pd.DataFrame(sample_map.get(selected_category, [])))
 
     st.divider()
     st.markdown("#### 직접 검색")
@@ -61,7 +63,21 @@ def product_ui():
     st.caption("최근 저장 데이터")
     rows = get_recent_products(limit=50, source="naver")
     if rows:
-        df = pd.DataFrame(rows, columns=["id","source","keyword","category","name","price","mall","link","image_url","collected_at"])
-        show = df.rename(columns={"keyword":"키워드","category":"카테고리","name":"상품명","price":"가격","mall":"몰","link":"링크","image_url":"이미지","collected_at":"수집일시"})
-        show = show[["이미지","상품명","카테고리","가격","몰","키워드","링크","수집일시"]]
+        df = pd.DataFrame(
+            rows,
+            columns=["id", "source", "keyword", "category", "name", "price", "mall", "link", "image_url", "collected_at"],
+        )
+        show = df.rename(
+            columns={
+                "image_url": "이미지",
+                "name": "상품명",
+                "category": "카테고리",
+                "price": "가격",
+                "mall": "몰",
+                "keyword": "키워드",
+                "link": "링크",
+                "collected_at": "수집일시",
+            }
+        )
+        show = show[["이미지", "상품명", "카테고리", "가격", "몰", "키워드", "링크", "수집일시"]]
         render_clickable_table(show)

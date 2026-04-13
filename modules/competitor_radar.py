@@ -7,7 +7,7 @@ from utils.db import insert_products, get_recent_products, log_event
 
 def competitor_ui():
     st.subheader("경쟁사 RADAR")
-    st.caption("네이버쇼핑 노출 결과에서 경쟁사 몰명을 필터링하는 방식으로 수집합니다.")
+    st.caption("네이버쇼핑 결과를 활용해 경쟁사 상품을 수집합니다. 키워드 방식과 전체 탐색 방식을 함께 제공합니다.")
 
     mode = st.radio("수집 방식", ["추적 키워드 방식", "전체 상품 탐색 방식"], horizontal=True)
 
@@ -57,7 +57,21 @@ def competitor_ui():
     st.caption("최근 저장 데이터")
     rows = get_recent_products(limit=100, source="competitor_naver")
     if rows:
-        df = pd.DataFrame(rows, columns=["id","source","keyword","category","name","price","mall","link","image_url","collected_at"])
-        show = df.rename(columns={"keyword":"키워드","category":"카테고리","name":"상품명","price":"가격","mall":"몰","link":"링크","image_url":"이미지","collected_at":"수집일시"})
-        show = show[["이미지","몰","상품명","카테고리","가격","키워드","링크","수집일시"]]
+        df = pd.DataFrame(
+            rows,
+            columns=["id", "source", "keyword", "category", "name", "price", "mall", "link", "image_url", "collected_at"],
+        )
+        show = df.rename(
+            columns={
+                "image_url": "이미지",
+                "mall": "몰",
+                "name": "상품명",
+                "category": "카테고리",
+                "price": "가격",
+                "keyword": "키워드",
+                "link": "링크",
+                "collected_at": "수집일시",
+            }
+        )
+        show = show[["이미지", "몰", "상품명", "카테고리", "가격", "키워드", "링크", "수집일시"]]
         render_clickable_table(show)

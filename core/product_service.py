@@ -1,4 +1,3 @@
-from collections import Counter
 from core.catalog import CATEGORY_KEYWORDS
 from core.naver_api import search_many
 from core.transforms import clean_html, guess_category
@@ -16,42 +15,44 @@ def collect_products_by_keyword(keyword, pages=2, sort="sim"):
         category = guess_category(name, keyword)
         rows.append(("naver", keyword, category, name, price, mall, link, image_url))
         cards.append({
-            "카테고리": category,
+            "이미지": image_url,
             "상품명": name,
+            "카테고리": category,
             "가격": price,
             "몰": mall,
             "링크": link,
-            "이미지": image_url,
         })
     return rows, cards
 
 def discover_hot_categories(pages=1):
-    counter = Counter()
-    samples = []
+    ranking = []
+    sample_map = {}
+
     for category, keywords in CATEGORY_KEYWORDS.items():
+        keyword = keywords[0]
         try:
-            items = search_many(keywords[0], pages=pages, display=30, sort="sim")
+            items = search_many(keyword, pages=pages, display=30, sort="sim")
         except Exception:
             items = []
-        count = 0
+
+        score = len(items) * 10
+        ranking.append({
+            "카테고리": category,
+            "검색지수": score,
+            "대표키워드": keyword,
+        })
+
+        samples = []
         for item in items[:20]:
-            name = clean_html(item.get("title", ""))
-            price = item.get("lprice", "")
-            mall = item.get("mallName", "")
-            link = item.get("link", "")
-            image_url = item.get("image", "")
-            counter[category] += 1
-            count += 1
-            if len(samples) < 40:
-                samples.append({
-                    "카테고리": category,
-                    "상품명": name,
-                    "가격": price,
-                    "몰": mall,
-                    "링크": link,
-                    "이미지": image_url,
-                })
-        if count == 0:
-            counter[category] += 0
-    ranking = [{"카테고리": k, "노출건수": v} for k, v in counter.most_common()]
-    return ranking, samples
+            samples.append({
+                "이미지": item.get("image", ""),
+                "상품명": clean_html(item.get("title", "")),
+                "가격": item.get("lprice", ""),
+                "몰": item.get("mallName", ""),
+                "링크": item.get("link", ""),
+                "카테고리": category,
+            })
+        sample_map[category] = samples
+
+    ranking = sorted(ranking, key=lambda x: float(x["검색지수"]), reverse=True)
+    return ranking, sample_map

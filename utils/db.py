@@ -1,12 +1,12 @@
 import sqlite3
 from pathlib import Path
 
-def _get_db_path() -> Path:
-    data_dir = Path.home() / ".md_radar_data"
-    data_dir.mkdir(parents=True, exist_ok=True)
-    return data_dir / "md_radar.db"
+def _db_path() -> Path:
+    folder = Path.home() / ".md_insight_data"
+    folder.mkdir(parents=True, exist_ok=True)
+    return folder / "md_insight.db"
 
-DB_PATH = _get_db_path()
+DB_PATH = _db_path()
 
 def get_conn():
     return sqlite3.connect(str(DB_PATH), check_same_thread=False)
@@ -88,15 +88,17 @@ def insert_keyword_cache(rows):
     conn.close()
     return count
 
-def get_recent_products(limit=200, source=None):
+def get_recent_products(limit=100, source=None):
     conn = get_conn()
     cur = conn.cursor()
     if source:
         cur.execute(
             """
             SELECT id, source, keyword, category, name, price, mall, link, image_url, collected_at
-            FROM products WHERE source = ?
-            ORDER BY id DESC LIMIT ?
+            FROM products
+            WHERE source = ?
+            ORDER BY id DESC
+            LIMIT ?
             """,
             (source, limit),
         )
@@ -105,7 +107,8 @@ def get_recent_products(limit=200, source=None):
             """
             SELECT id, source, keyword, category, name, price, mall, link, image_url, collected_at
             FROM products
-            ORDER BY id DESC LIMIT ?
+            ORDER BY id DESC
+            LIMIT ?
             """,
             (limit,),
         )
@@ -113,7 +116,7 @@ def get_recent_products(limit=200, source=None):
     conn.close()
     return rows
 
-def get_recent_keywords(limit=200, source=None, period=None):
+def get_recent_keywords(limit=100, source=None, period=None):
     conn = get_conn()
     cur = conn.cursor()
     q = "SELECT id, source, period, keyword, score, collected_at FROM keyword_cache WHERE 1=1"
@@ -124,7 +127,7 @@ def get_recent_keywords(limit=200, source=None, period=None):
     if period:
         q += " AND period = ?"
         params.append(period)
-    q += " ORDER BY id DESC LIMIT ?"
+    q += " ORDER BY score DESC, id DESC LIMIT ?"
     params.append(limit)
     cur.execute(q, tuple(params))
     rows = cur.fetchall()
@@ -136,9 +139,11 @@ def get_names_for_insight(limit=150):
     cur = conn.cursor()
     cur.execute(
         """
-        SELECT name FROM products
+        SELECT name
+        FROM products
         WHERE name IS NOT NULL AND TRIM(name) != ''
-        ORDER BY id DESC LIMIT ?
+        ORDER BY id DESC
+        LIMIT ?
         """,
         (limit,),
     )
@@ -153,17 +158,34 @@ def get_summary_stats():
     total = cur.fetchone()[0]
     cur.execute("SELECT source, COUNT(*) FROM products GROUP BY source ORDER BY COUNT(*) DESC")
     by_source = cur.fetchall()
-    cur.execute("SELECT category, COUNT(*) FROM products WHERE category IS NOT NULL AND TRIM(category) != '' GROUP BY category ORDER BY COUNT(*) DESC LIMIT 20")
+    cur.execute(
+        """
+        SELECT category, COUNT(*)
+        FROM products
+        WHERE category IS NOT NULL AND TRIM(category) != ''
+        GROUP BY category
+        ORDER BY COUNT(*) DESC
+        LIMIT 20
+        """
+    )
     by_category = cur.fetchall()
     cur.execute("SELECT mall, COUNT(*) FROM products GROUP BY mall ORDER BY COUNT(*) DESC LIMIT 20")
     by_mall = cur.fetchall()
     conn.close()
-    return {"total": total, "by_source": by_source, "by_category": by_category, "by_mall": by_mall}
+    return {
+        "total": total,
+        "by_source": by_source,
+        "by_category": by_category,
+        "by_mall": by_mall,
+    }
 
 def log_event(source, status, message):
     conn = get_conn()
     cur = conn.cursor()
-    cur.execute("INSERT INTO logs (source, status, message) VALUES (?, ?, ?)", (source, status, message))
+    cur.execute(
+        "INSERT INTO logs (source, status, message) VALUES (?, ?, ?)",
+        (source, status, message),
+    )
     conn.commit()
     conn.close()
 

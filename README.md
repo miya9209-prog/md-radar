@@ -1,11 +1,4 @@
-# MD 레이다 2차 구조 개편본
-
-## 반영 내용
-- 상단 탭 메뉴 방식
-- 키워드 레이다: 일간/주간/월간 키워드 요약 + 직접 검색
-- 상품 레이다: 핫 카테고리 리스팅 + 직접 검색 + 썸네일 표시
-- 경쟁사 레이다: 전체 상품 탐색 / 추적 키워드 방식 2가지
-- MD 인사이트: 수집된 DB를 바탕으로 GPT가 해석
+# MD 인사이트
 
 ## Streamlit Secrets
 ```toml
@@ -13,3 +6,16 @@ OPENAI_API_KEY = "한줄 전체키"
 NAVER_CLIENT_ID = "..."
 NAVER_CLIENT_SECRET = "..."
 ```
+
+## 실행
+```bash
+pip install -r requirements.txt
+streamlit run app.py
+```
+
+## 구조
+- 키워드 RADAR: 일간/주간/월간 트렌드 요약 + 직접 검색
+- 상품 RADAR: 핫 카테고리 + 썸네일 + 상품 검색
+- 경쟁사 RADAR: 키워드 방식 / 전체 탐색 방식
+- MD 인사이트: DB 기반 GPT 분석
+- 매출형 상품기획: GPT 기반 상품기획서 생성

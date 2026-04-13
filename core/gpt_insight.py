@@ -13,7 +13,7 @@ def generate_insight():
     by_mall = "\n".join([f"- {mall}: {cnt}건" for mall, cnt in stats["by_mall"][:15]])
 
     client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-    prompt = f'''
+    prompt = f"""
 아래는 최근 수집된 패션 상품 데이터입니다.
 
 [전체 수집 개수]
@@ -40,7 +40,33 @@ def generate_insight():
 4. 포털/경쟁사 기준 지금 강한 상품군
 5. 다음 상품기획 제안 7개
 6. 상세페이지/광고카피에 바로 쓸 표현 10개
-'''
+"""
+    res = client.chat.completions.create(
+        model="gpt-4.1-mini",
+        messages=[{"role": "user", "content": prompt}],
+    )
+    return res.choices[0].message.content
+
+def generate_sales_planner(keyword):
+    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+    prompt = f"""
+주제: {keyword}
+
+이 키워드로 패션 쇼핑몰 MD를 위한 매출형 상품기획서를 한국어로 작성해 주세요.
+
+반드시 아래 형식으로 작성:
+1. 기획 배경
+2. 타깃 고객 정의
+3. 상품 컨셉
+4. 핵심 판매 포인트 7개
+5. 추천 소재/핏/컬러
+6. 가격 전략
+7. 상품명 제안 7개
+8. 상세페이지 섹션 구성안
+9. 광고 카피 10개
+10. 릴스/숏폼 후킹 문구 10개
+11. 이번 기획의 리스크와 보완점
+"""
     res = client.chat.completions.create(
         model="gpt-4.1-mini",
         messages=[{"role": "user", "content": prompt}],
